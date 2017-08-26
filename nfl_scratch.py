@@ -61,7 +61,12 @@ where season_type='Regular'""")
 stats = cur.fetchall()
 
 stats=pd.DataFrame(stats,columns=['pos_team','drive_id','pos_time','first_downs','yards_gained','play_count','result','season_year','week','season_type','home_team','away_team'])
+
+# points
+stats['points'] = [3 if x=="Field Goal" else 7 if x=="Touchdown" else 0 for x in stats['result']]
+
 # turnover
+stats['turnover'] = [1 if x==("Interception" or "Fumble" or "Safety" or "Blocked FG" or "Fumble, Safety" or "Blocked Punt" or "Blocked Punt, Downs" or "Blocked FG, Downs") else 0 for x in stats['result']]
 
 # defense
 # turnovers forced

@@ -68,9 +68,16 @@ stats['points'] = [3 if x=="Field Goal" else 7 if x=="Touchdown" else 0 for x in
 # turnover
 stats['turnover'] = [1 if x==("Interception" or "Fumble" or "Safety" or "Blocked FG" or "Fumble, Safety" or "Blocked Punt" or "Blocked Punt, Downs" or "Blocked FG, Downs") else 0 for x in stats['result']]
 
+
 # defense
-# turnovers forced
-# yards allowed
+stats_d = stats
+stats_d['opp_team'] = np.where(stats_d['pos_team']==stats_d['home_team'], stats_d['away_team'], stats_d['home_team'])
+
+stats_d = stats_d[['season_year','week','opp_team','yards_gained','points','turnover']]
+
+stats_d.columns = ['year','week','team','yards_allowed','points_allowed','turnovers_forced']
+
+
 
 
 

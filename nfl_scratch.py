@@ -72,12 +72,89 @@ stats['turnover'] = [1 if x==("Interception" or "Fumble" or "Safety" or "Blocked
 # defense
 stats_d = stats
 stats_d['opp_team'] = np.where(stats_d['pos_team']==stats_d['home_team'], stats_d['away_team'], stats_d['home_team'])
-
+#subset to defensive stats
 stats_d = stats_d[['season_year','week','opp_team','yards_gained','points','turnover']]
-
+# rename columns
 stats_d.columns = ['year','week','team','yards_allowed','points_allowed','turnovers_forced']
 
+# look at the numbers
+# table = pd.pivot_table(stats_d, values=['yards_allowed','points_allowed','turnovers_forced'], index=['year', 'team'], aggfunc=np.sum)
+# table.sort_values(by='turnovers_forced',ascending=False)
+
+# aggregate rolling 5 week
+## sort at year, team, week
+stats_d.sort_values(by=['team','year','week'],inplace=True)
+## sum across year team week
+stats_d=stats_d.groupby(by=['team','year','week'],as_index=False).sum()
+## rolling 5 week lagged
+rolling = stats_d.groupby(['team'],as_index=False)['yards_allowed','points_allowed','turnovers_forced'].rolling(5).sum().shift(1).reset_index()
+## join together
+stats_d=stats_d.join(rolling,lsuffix='_weekly',rsuffix='_rolling')
 
 
 
+
+
+
+
+
+
+# net yards
+
+df=stats_d
+
+
+cumsums = df.groupby(['team', 'year', 'week']).rolling(5).sum().fillna(0).groupby(level=0).cumsum()
+df.set_index(['team', 'year', 'week'], inplace=True)
+df['a','b','c'] = cumsums
+df.reset_index(inplace=True)
+
+
+cumsums = df.groupby(['team', 'year', 'week']).sum().fillna(0).groupby(level=0).cumsum()
+df.set_index(['team', 'year', 'week'], inplace=True)
+df['a','b','c'] = cumsums
+df.reset_index(inplace=True)
+
+
+
+
+
+
+
+
+
+x=x.groupby('team')['yards_allowed','points_allowed'].rolling(5).sum().reset_index(0,drop=True)
+
+x.to_csv('test.csv')
+
+
+
+
+
+stats_d.set_index(['year','team','week'],inplace=True)
+
+
+
+x.loc[x['team'].isin('CAR')]
+
+
+## rolling 5 week window
+stats_d.set_index(['year','team','week'],inplace=True)
+stats_d.rolling(5).sum()
+
+
+
+
+
+
+
+## index at year, team, week
+stats_d.set_index(['year','team','week'],inplace=True)
+## sum at year, team, week
+stats_d=pd.pivot_table(stats_d, values=['yards_allowed','points_allowed','turnovers_forced'], index=['year', 'team', 'week'], aggfunc=np.sum)
+
+stats_d.groupby(level=0, group_keys=False).rolling(5).sum()
+
+
+# offense
 

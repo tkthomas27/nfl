@@ -36,7 +36,7 @@ game_results['tie'] = [1 if x==y else 0 for x,y in zip(game_results['home_score'
 
 game_results=game_results.sort(columns=['year','home_team','week'])
 
-no_ties = game_results.drop(game_results[game_results.tie==1].index)
+no_ties = game_results
 
 filter_col = ["year","week"] + [col for col in no_ties if col.startswith('home')]
 home = no_ties[filter_col]
@@ -48,8 +48,7 @@ away.columns = ['year','week','team','score','win']
 
 wins = home
 wins = wins.append(away)
-wins = wins.sort_values(by=['year','team','week'])
-
+wins = wins.sort_values(by=['team','year','week']).reset_index()
 
 
 
@@ -91,8 +90,44 @@ rolling = stats_d.groupby(['team'],as_index=False)['yards_allowed','points_allow
 ## join together
 stats_d=stats_d.join(rolling,lsuffix='_weekly',rsuffix='_rolling')
 
+# offense
+stats_o = stats
+stats_o=stats_o.rename(columns = {'pos_team':'team'})
+stats_o=stats_o.rename(columns = {'season_year':'year'})
+stats_o = stats_o[['team','year','week','first_downs','yards_gained','play_count','points','turnover']]
+# aggregate rolling 5 week
+## sort at year, team, week
+stats_o.sort_values(by=['team','year','week'],inplace=True)
+## sum across year team week
+stats_o=stats_o.groupby(by=['team','year','week'],as_index=False).sum()
+## rolling 5 week lagged
+rolling = stats_o.groupby(['team'],as_index=False)['first_downs','yards_gained','play_count','points','turnover'].rolling(5).sum().shift(1).reset_index()
+## join together
+stats_o=stats_o.join(rolling,lsuffix='_weekly',rsuffix='_rolling')
 
 
+## combine offense and defense
+stats_o = stats_o.drop(['level_0','level_1'], axis=1)
+stats_d = stats_d.drop(['level_0','level_1'], axis=1)
+stats_od=pd.concat([stats_d,stats_o],axis=1)
+
+# add wins
+nfl=pd.concat([stats_od,wins],axis=1)
+nfl=nfl.T.drop_duplicates().T
+
+nfl.to_csv('nfl.csv')
+
+
+nfl = pd.merge(stats_od, wins, how='left', on=['team', 'year', 'week'])
+
+nfl = stats_od.merge(wins, how='left', left_on=['team', 'year', 'week'])
+
+
+
+
+
+zz.to_csv('test.csv')
+wins.to_csv('testx.csv')
 
 
 

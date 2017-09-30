@@ -648,16 +648,51 @@ print(result.summary())
 
 
 
+#############################################
+#############################################
+#############################################
+"""
+wp for every play from 2010-2017 for the offense
+every game therefore has two wp curves
+-average across all is .5
+take standard deviaiton of each curve to get measure of excitement 
+-std by game-team; how much each wp differs from average wp for that game-team
+-if a blowout, wp for win/lose team probably gets to 90s quicly and doenst change so
+--average wp is like 80 and those upper 80/90 wp make for small stds
+check a few examples and it looks generally correct
+then take average for stds by week
+"""
 
 
+# nfl wp
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
 
+data = pd.read_csv("~/nfl_wp_data.csv")
+wp = pd.read_csv("~/nfl_wp.csv")
 
+aa=data.join(wp,lsuffix="_")
 
+bb=aa.groupby(["gsis_id","offense_team"])['wp'].std().reset_index()
 
+#get week/year data
+# connect to PostgreSQL
+import psycopg2
+conn=psycopg2.connect("dbname='nfldb' user='kthomas1' host='localhost' password='' port=5432")
 
+# query game results
+games=pd.read_sql("""select gsis_id, season_year, week from game""",con=conn)
+games['gsis_id'] = games['gsis_id'].astype('int64')
+games_wp = pd.merge(games,bb,how='inner',on='gsis_id')
 
+# group by year-week -> average, min, max
+week = games_wp.groupby(['season_year','week'])['wp'].mean().reset_index()
 
-
+week.index = pd.DatetimeIndex(freq='w',start=0,periods=121)
+decomp = sm.tsa.seasonal_decompose(week['wp'],model='multiplicative')
+decomp.plot()
 
 
 

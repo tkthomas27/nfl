@@ -7,7 +7,6 @@ Created on Sun Sep  3 19:23:33 2017
 """
 
 
-
 # import pandas and numpy for 
 import pandas as pd
 import numpy as np
@@ -262,6 +261,8 @@ qb_names = qb_stats[['full_name']]
 qb_nums = qb_stats[qb_stats.filter(regex='passing.*').columns]
 
 
+##################################################
+#create tiers of players
 # Create scaler: scaler
 scaler = StandardScaler()
 
@@ -278,6 +279,382 @@ qb_group = pd.DataFrame(pipeline.predict(qb_nums),columns=['qb_group'])
 pd.crosstab(index=qb_group['qb_group'],columns = "count")
 
 kmeans_group = qb_names.join(qb_group)
+
+print(kmeans.inertia_)
+##################################################
+
+##################################################
+#query cosine similarities to other players
+from sklearn.decomposition import NMF
+from sklearn.preprocessing import normalize
+
+qb_nums['passing_sk_yds'] = qb_nums['passing_sk_yds']*-1
+
+nmf = NMF(n_components=5)
+nmf_features = nmf.fit_transform(qb_nums)
+norm_features = normalize(nmf_features)
+tom_brady = norm_features[0,:]
+similarities = norm_features.dot(tom_brady)
+
+a = pd.DataFrame(similarities)
+x = a.join(qb_names)
+
+
+##################################################
+#t-sne
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+
+model = TSNE(learning_rate=190)
+tx = model.fit_transform(qb_nums)
+xs=tx[:,0]
+ys = tx[:,1]
+plt.scatter(xs,ys)
+plt.show()
+
+##################################################
+#pca
+
+
+for char in 'aaaa':
+    locs = [pos for pos, ele in enumerate('aaaa') if ele == char]
+    print(locs)
+
+
+    substr_dict = {}
+    
+    x=0
+    
+    for char in line:
+        locs = [pos for pos, ele in enumerate(line) if ele == char]
+        max_loc = max(locs)
+        subst = line[x:max_loc+1]
+        substr_dict[subst]=len(subst)
+        x+=1
+    
+
+    for x in range(0,str_len):
+        if len(set(line[first_index:final_index])) == len(line[first_index:final_index]):
+            fi=first_index
+        else:
+            first_index+1
+            
+
+
+
+
+
+
+
+
+line = 'abcabcffab'
+
+str_len = len(line)
+
+while str_len>-1:
+    if len(set(line[0:str_len])) == len(line[0:str_len]):
+        last=str_len
+        break
+    else:
+        print(str_len)
+        str_len = str_len-1
+            
+first_index = 0
+
+while first_index<len(line):
+    if len(set(line[first_index:last])) == len(line[first_index:last]):
+        first=first_index
+        break
+    else:
+        first_index = first_index+1
+
+answer = line[first:last]
+
+print(answer)
+
+
+
+line = 'abcabcffab'
+
+first_index = 0
+last_index = len(line)
+
+while str_len>-1:
+    if len(set(line[first_index:last_index])) == len(line[first_index:last_index]):
+        first=first_index
+    elif len(set(line[first_index:last_index])) == len(line[first_index:last_index]):
+        last=str_len
+    elif first>=0 and last>0:
+        break
+    else:
+        first_index = first_index+1
+        last_index = last_index-1
+
+answer = line[first:last]
+
+print(answer)
+
+
+
+
+
+line = 'abcabcffab'
+
+first_index = 0
+last_index = len(line)
+
+while str_len>-1:
+    if len(set(line[first_index:last])) == len(line[first_index:last]):
+        first=first_index
+        break
+    else:
+        first_index = first_index+1
+
+answer = line[first:last]
+
+print(answer)
+
+
+
+line = 'abcabcffab'
+fw = 0
+lw = len(line)
+window = lw-fw
+
+
+while window>0:
+    while lw<len(line):
+        if len(set(line[fw:lw])) == len(line[fw:lw]):
+            first = fw
+            last = lw
+            break
+        else:
+            fw=fw+1
+            lw=lw+1
+    window = window-1
+    fw=0
+    lw=window
+
+        
+
+0,10
+0,9
+1,10
+0,8
+1,9
+2,10
+0,7
+1,8
+2,9
+3,10
+    
+    
+
+
+
+line = 'abcabcffab'
+fw = 0
+lw = len(line)
+window = lw-fw
+
+while window>0:
+    while lw<=len(line):
+        if len(set(line[fw:lw])) == len(line[fw:lw]):
+            first = fw
+            last = lw
+            break
+        else:
+            fw=fw+1
+            lw=window
+    window = window-1
+    print(lw)
+    fw=0
+    lw=window
+
+line[first:last]
+
+
+
+
+def factorial(n):
+    if n == 1:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+factorial(3)
+
+
+def window(n):
+    i = n-1
+    if i==n:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+window(10)
+
+
+
+
+def u(n):
+  ux = u0
+  for i in xrange(n):
+    ux=f(ux)
+  return ux
+
+
+0,10
+0,9
+1,10
+0,8
+1,9
+2,10
+0,7
+1,8
+2,9
+3,10
+    
+
+def a(n):
+    y=0
+    while count<n:
+        y = y+1
+        count = count+1
+
+
+def string_splosion(string):
+    return ''.join(string[:i] for i in range(1, len(string) + 1))
+
+x=0
+while x<10:
+    for i in range(0,x):
+        print([i,10-i])
+    x=x+1
+
+
+line = 'abdjwawk'
+x=0
+while x<len(line):
+    for i in range(0,x):
+        w=len(line)-i
+        if len(set(line[i:w])) == len(line[i:w]):
+                    first = i
+                    last = w
+                    break
+    x=x+1
+
+line[i:w]
+
+
+x=0
+while x<10:
+    for i in range(0,x):
+        print(i)
+    x=x+1
+
+#1,1,2,1,2,3,1,2,3,4
+
+x=10
+while x>-2:
+    for i in range(10,x,-1):
+        print(i)
+    x=x-1
+#10,10,9,10,9,10,9,8
+
+x=10
+while x>=0:
+    for i in range(x,11):
+        print(i)
+    x=x-1
+
+#10,9,10,8,9,10
+
+
+
+
+line = 'aaaaa'
+
+alist = []
+blist = []
+
+a=0
+while a<len(line):
+    for i in range(0,a):
+        alist.append(i)
+    a=a+1
+
+b=len(line)
+c=b+1
+while b>=0:
+    for i in range(b,c):
+        blist.append(i)
+    b=b-1
+
+inds = list(zip(alist,blist))
+
+for i in range(0,len(inds)):
+    x=inds[i][0]
+    y=inds[i][1]
+    print(line[x:y])
+    if len(set(line[x:y])) == len(line[x:y]):
+        first = inds[i][0]
+        last = inds[i][1]
+        break
+
+line[first:last]
+
+
+
+
+
+
+def intervals(line):
+    last = {}
+    start = end = 0
+    for i, letter in enumerate(line):
+        end += 1
+        if letter in last and start <= last[letter]:
+            start = last[letter] + 1
+        yield line[start:end]
+        last[letter] = i
+
+
+def non_repeat(line):
+    return max(intervals(line), key=len, default='')
+
+non_repeat('abdjwawk')
+    
+
+def non_repeat(line):
+    return (line if len(line) == len(set(line)) else
+            max(non_repeat(line[:-1]),
+                non_repeat(line[1:]), key=len)
+            )
+            
+    
+non_repeat('abdjwawk')
+    
+    
+    
+def create_intervals(data):
+    
+    l = sorted(data)
+    
+    ans=[]
+    
+    while len(l)>0:
+        for x,y in enumerate(l):
+            try:
+                if (l[x+1]-l[x])>1:
+                    ans.append((l[0],l[x]))
+                    l=l[x:]
+            except:
+                pass
+
+create_intervals({1, 2, 3, 4, 5, 7, 8, 12})
+    
+    
 
 
 ks = range(1, 6)
@@ -431,6 +808,50 @@ for i in enumerate(x):
     indices = [a for a, b in enumerate(x[i[0]:]) if b == i[1]]
     print(i[0],indices[1])
 
+
+
+a=21437
+b=-21437
+
+if (a>=0 and b>=0) or (a<=0 and b<=0):
+    la = list(range(1,abs(a)+1))
+    lb = list(range(1,abs(b)+1))
+    la.extend(lb)
+            
+elif a<0:
+    lb = list(range(1,abs(b)+1))
+    la = lb[:a]
+            
+elif b<0:
+    lb = list(range(1,abs(a)+1))
+    la = lb[:b]
+        
+print(len(la))
+
+
+
+
+
+x=[1,2,3,4]
+
+
+
+def reverse(self, x):
+    s = cmp(x, 0)
+    r = int(`s*x`[::-1])
+    return s*r * (r < 2**31)
+
+
+
+
+
+
+
+import numpy as np
+import scipy.stats as stats
+dist = stats.beta
+data = stats.bernoulli.rvs(0.5, size=n_trials[-1])
+x = np.linspace(0, 1, 100)
 
 
 
